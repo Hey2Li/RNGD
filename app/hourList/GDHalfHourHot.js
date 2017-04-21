@@ -22,12 +22,19 @@ export default class GDHalfHourHot extends Component {
 
     constructor(props){
         super(props);
+        //初始状态
         this.state = {
             dataSource:new ListView.DataSource({rowHasChanged:(r1, r2) => r1!==r2}),
             loaded:false,
         };
         this.fetchData = this.fetchData.bind(this);
     }
+
+    //
+    static defaultProps = {
+        removeModal:{}
+    }
+
     //网络请求的方法
     fetchData(resolve){
         HTTPBase.get('http://guangdiu.com/api/gethots.php')
@@ -62,8 +69,9 @@ export default class GDHalfHourHot extends Component {
     componentWillUnmount(){
         DeviceEventEmitter.emit('isHiddenTabBar',false);
     }
-    popToHome() {
-        this.props.navigator.pop();
+    popToHome(data) {
+        this.props.removeModal(data);
+        // this.props.navigator.pop();
     }
     renderTitleItem(){
         return(
@@ -72,7 +80,7 @@ export default class GDHalfHourHot extends Component {
     }
     renderRightItem(){
         return(
-            <TouchableOpacity onPress={()=>this.popToHome()}>
+            <TouchableOpacity onPress={()=>this.popToHome(false)}>
                 <Text style={styles.navbarRightItemStyle}>关闭</Text>
             </TouchableOpacity>
         );

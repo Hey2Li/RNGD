@@ -8,6 +8,7 @@ import {
     Dimensions,
     Navigator,
     ActivityIndicator,
+    Modal
 } from 'react-native';
 // 组件
 import  CommunaNavBar from '../main/GDCommunaNavBar';
@@ -27,6 +28,7 @@ export default class GDHome extends Component {
         this.state = {
             dataSource:new ListView.DataSource({rowHasChanged:(r1, r2) => r1!==r2}),
             loaded:false,
+            isModal:false,
         };
         this.fetchData = this.fetchData.bind(this);
         this.loadMore = this.loadMore.bind(this);
@@ -75,10 +77,13 @@ export default class GDHome extends Component {
     }
   //跳转到半小时热门
     pushToHalfHourHot(){
-      this.props.navigator.push({
-          component:HalfHourHot,
-          animationType:Navigator.SceneConfigs.FloatFromBottom,
-      });
+        this.setState({
+            isModal:true,
+        })
+      // this.props.navigator.push({
+      //     component:HalfHourHot,
+      //     animationType:Navigator.SceneConfigs.FloatFromBottom,
+      // });
     }
     pushToSearch() {
         this.props.navigator.push({
@@ -160,9 +165,28 @@ export default class GDHome extends Component {
             );
         }
     }
+    onRequestClose(){
+        this.setState({
+            isModal:false,
+        })
+    }
+    closeModal(data){
+        this.setState({
+            isModal:data,
+        })
+    }
   render() {
     return (
         <View style={styles.container}>
+            {/*初始化模态*/}
+            <Modal
+                animationType='slide'
+                translucent={false}
+                visible={this.state.isModal}
+                onRequestClose={() => this.onRequestClose()}
+            >
+                <HalfHourHot removeModal={(data)=>this.closeModal(data)}/>
+            </Modal>
             <CommunaNavBar
               leftItem={()=>this.renderLeftItem()}
               titleItem={()=>this.renderTitleItem()}
