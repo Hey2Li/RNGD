@@ -8,7 +8,8 @@ import {
     Dimensions,
     Navigator,
     ActivityIndicator,
-    Modal
+    Modal,
+    AsyncStorage
 } from 'react-native';
 // 组件
 import  CommunaNavBar from '../main/GDCommunaNavBar';
@@ -30,6 +31,7 @@ export default class GDHome extends Component {
             loaded:false,
             isModal:false,
         };
+        this.data = [];
         this.fetchData = this.fetchData.bind(this);
         this.loadMore = this.loadMore.bind(this);
     }
@@ -37,19 +39,31 @@ export default class GDHome extends Component {
     //网络请求的方法
     fetchData(resolve){
 
-        let params = {"count":5}
+        let params = {"count":10};
 
-        HTTPBase.post('http://guangdiu.com/api/getlist.php',params,{})
+        HTTPBase.get('http://guangdiu.com/api/getlist.php',params)
             .then((responseData)=>{
+
+                //拼接数据
+                this.data = this.data.concat(responseData.data);
+
+                //重新渲染
                 this.setState({
-                    dataSource:this.state.dataSource.cloneWithRows(responseData.data),
+                    dataSource:this.state.dataSource.cloneWithRows(this.data),
                     loaded:true,
                 });
+
+                //关闭加载动画
                 if (resolve !== undefined){
                     setTimeout(()=>{
                         resolve();
                     },1000);
                 }
+
+                //存储数组的中最后一个元素的ID
+                let lastID = responseData.data[responseData.data.length - 1].id;
+                console.log(responseData.data);
+                AsyncStorage.setItem('lastID',lastID.toString());
             }).catch((error)=>{
 
         })
@@ -75,6 +89,33 @@ export default class GDHome extends Component {
         //     })
         //     .done();
     }
+
+    loadMoreData(value){
+
+        //读取id
+
+        let params = {
+            "count":10,
+            "sinceid":value
+        };
+
+        HTTPBase.get('http://guangdiu.com/api/getlist.php',params)
+            .then((responseData)=>{
+                //拼接数据
+                this.data = this.data.concat(responseData.data);
+
+                this.setState({
+                    dataSource:this.state.dataSource.cloneWithRows(this.data),
+                    loaded:true,
+                });
+
+                //存储数组的中最后一个元素的ID
+                let lastID = responseData.data[responseData.data.length - 1].id;
+                AsyncStorage.setItem('lastID',lastID.toString());
+            }).catch((error)=>{
+
+        })
+    }
   //跳转到半小时热门
     pushToHalfHourHot(){
         this.setState({
@@ -90,15 +131,17 @@ export default class GDHome extends Component {
             component: Search,
         });
     }
+
     renderLeftItem(){
-     return(
-         <TouchableOpacity onPress={()=>{
-             this.pushToHalfHourHot()
-         }}>
-           <Image source={{uri:'hot_icon_20x20'}} style={styles.navbarLeftItemStyle} />
-         </TouchableOpacity>
-     );
+         return(
+             <TouchableOpacity onPress={()=>{
+                 this.pushToHalfHourHot()
+             }}>
+               <Image source={{uri:'hot_icon_20x20'}} style={styles.navbarLeftItemStyle} />
+             </TouchableOpacity>
+         );
     }
+
     renderTitleItem(){
         return(
             <TouchableOpacity>
@@ -106,6 +149,7 @@ export default class GDHome extends Component {
             </TouchableOpacity>
         );
     }
+
     renderRightItem(){
       return(
           <TouchableOpacity onPress={()=>{this.pushToSearch()}}>
@@ -113,9 +157,12 @@ export default class GDHome extends Component {
           </TouchableOpacity>
       );
     }
+
     componentDidMount(){
         this.fetchData();
     }
+
+    //填充cell
     renderRow(rowData){
         return(
             <CommunaHotCell
@@ -124,16 +171,15 @@ export default class GDHome extends Component {
             />
         );
     }
+    
+    //加载更多
     loadMore(){
-        fetch('http://guangdiu.com/api/gethots.php')
-            .then((response) => response.json())
-            .then((responseData)=>{
-                this.setState({
-                    dataSource:this.state.dataSource.cloneWithRows(responseData.data),
-                    loaded:true,
-                });
+        //读取存储的id
+        AsyncStorage.getItem('lastID')
+            .then((value)=>{
+                //数据加载操作
+                this.loadMoreData(value);
             })
-            .done()
     }
 
     renderFooter(){
@@ -175,27 +221,27 @@ export default class GDHome extends Component {
             isModal:data,
         })
     }
-  render() {
-    return (
-        <View style={styles.container}>
-            {/*初始化模态*/}
-            <Modal
-                animationType='slide'
-                translucent={false}
-                visible={this.state.isModal}
-                onRequestClose={() => this.onRequestClose()}
-            >
-                <HalfHourHot removeModal={(data)=>this.closeModal(data)}/>
-            </Modal>
-            <CommunaNavBar
-              leftItem={()=>this.renderLeftItem()}
-              titleItem={()=>this.renderTitleItem()}
-              rightItem={()=>this.renderRightItem()}
-            />
-            {/*根据网络状态决定是否渲染*/}
-            {this.renderListView()}
-        </View>
-    );
+    render() {
+        return (
+            <View style={styles.container}>
+                {/*初始化模态*/}
+                <Modal
+                    animationType='slide'
+                    translucent={false}
+                    visible={this.state.isModal}
+                    onRequestClose={() => this.onRequestClose()}
+                >
+                    <HalfHourHot removeModal={(data)=>this.closeModal(data)}/>
+                </Modal>
+                <CommunaNavBar
+                  leftItem={()=>this.renderLeftItem()}
+                  titleItem={()=>this.renderTitleItem()}
+                  rightItem={()=>this.renderRightItem()}
+                />
+                {/*根据网络状态决定是否渲染*/}
+                {this.renderListView()}
+            </View>
+        );
   }
 }
 
