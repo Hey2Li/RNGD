@@ -1,3 +1,6 @@
+/**
+ * Created by Tebuy on 2017/4/21.
+ */
 import React, { Component } from 'react';
 import {
     StyleSheet,
@@ -20,7 +23,7 @@ import {PullList} from 'react-native-pull';
 
 const {width, height} = Dimensions.get('window');
 
-export default class GDHalfHourHot extends Component {
+export default class GDUSHalfHourHot extends Component {
 
     constructor(props){
         super(props);
@@ -39,7 +42,10 @@ export default class GDHalfHourHot extends Component {
 
     //网络请求的方法
     fetchData(resolve){
-        HTTPBase.get('http://guangdiu.com/api/gethots.php')
+        let params = {
+          "c":"us"
+        };
+        HTTPBase.get('http://guangdiu.com/api/gethots.php',params)
             .then((responseData)=>{
                 this.setState({
                     dataSource:this.state.dataSource.cloneWithRows(responseData.data),
@@ -64,12 +70,12 @@ export default class GDHalfHourHot extends Component {
     //返回每一行cell的样式
     renderRow(rowData){
         return(
-           <TouchableOpacity onPress={()=>this.pushToDetail(rowData.id)}>
-               <CommunaHotCell
-                   image={rowData.image}
-                   title={rowData.title}
-               />
-           </TouchableOpacity>
+            <TouchableOpacity onPress={()=>this.pushToDetail(rowData.id)}>
+                <CommunaHotCell
+                    image={rowData.image}
+                    title={rowData.title}
+                />
+            </TouchableOpacity>
         );
     }
 
@@ -101,11 +107,11 @@ export default class GDHalfHourHot extends Component {
     }
     //返回ListView的头部
     renderHeader(){
-          return(
-              <View style={styles.headerPromptStyle}>
-                  <Text>根据每条折扣的点击进行统计，每5分钟更新一次</Text>
-              </View>
-          );
+        return(
+            <View style={styles.headerPromptStyle}>
+                <Text>根据每条折扣的点击进行统计，每5分钟更新一次</Text>
+            </View>
+        );
     }
 
     renderListView(){

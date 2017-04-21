@@ -8,12 +8,13 @@ import {
     Dimensions,
     ActivityIndicator,
     Modal,
-    AsyncStorage
+    AsyncStorage,
+    Navigator
 } from 'react-native';
 // 组件
 import  CommunaNavBar from '../main/GDCommunaNavBar';
 import  HalfHourHot from '../hourList/GDHalfHourHot';
-import Search from '../home/GDSearch';
+import Search from '../main/GDSearch';
 import NoDataView from '../main/GDNoDataView';
 import CommunaHotCell from '../main/GDCommunaHotCell';
 import HTTPBase from '../http/HTTPBase';
@@ -243,7 +244,20 @@ export default class GDHome extends Component {
                     visible={this.state.isModal}
                     onRequestClose={() => this.onRequestClose()}
                 >
-                    <HalfHourHot removeModal={(data)=>this.closeModal(data)}/>
+                    <Navigator
+                        initialRoute={{
+                            name:'halfHourHot',
+                            component:HalfHourHot
+                        }}
+
+                        renderScene={(route, navigator = {})=>{
+                            let Component = route.component;
+                            return <Component
+                                removeModal={(data)=>this.closeModal(data)}
+                                {...route.params}
+                                navigator={navigator}/>
+                        }}
+                    />
                 </Modal>
                 <CommunaNavBar
                   leftItem={()=>this.renderLeftItem()}

@@ -8,7 +8,7 @@ import {
     TouchableOpacity,
     Image
 } from 'react-native';
-import CommunaNavBar from '../main/GDCommunaNavBar';
+import CommunaNavBar from './GDCommunaNavBar';
 export default class GDSearch extends Component {
 
     static propTypes ={
