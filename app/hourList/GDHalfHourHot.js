@@ -63,11 +63,12 @@ export default class GDHalfHourHot extends Component {
     componentWillMount(){
         DeviceEventEmitter.emit('isHiddenTabBar',true);
     }
-    componentDidMount(){
-        this.fetchData();
-    }
+
     componentWillUnmount(){
         DeviceEventEmitter.emit('isHiddenTabBar',false);
+    }
+    componentDidMount(){
+        this.fetchData();
     }
     popToHome(data) {
         this.props.removeModal(data);

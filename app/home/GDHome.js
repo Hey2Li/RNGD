@@ -6,7 +6,6 @@ import {
     Image,
     ListView,
     Dimensions,
-    Navigator,
     ActivityIndicator,
     Modal,
     AsyncStorage
@@ -18,6 +17,7 @@ import Search from '../home/GDSearch';
 import NoDataView from '../main/GDNoDataView';
 import CommunaHotCell from '../main/GDCommunaHotCell';
 import HTTPBase from '../http/HTTPBase';
+import CommunaDetail from '../main/GDCommunaDetail';
 //第三方
 import {PullList} from 'react-native-pull';
 
@@ -162,16 +162,6 @@ export default class GDHome extends Component {
         this.fetchData();
     }
 
-    //填充cell
-    renderRow(rowData){
-        return(
-            <CommunaHotCell
-                image={rowData.image}
-                title={rowData.title}
-            />
-        );
-    }
-    
     //加载更多
     loadMore(){
         //读取存储的id
@@ -211,6 +201,28 @@ export default class GDHome extends Component {
             );
         }
     }
+
+    pushToDetail(value){
+        this.props.navigator.push({
+            component:CommunaDetail,
+            params:{
+                url:'http://guangdiu.com/go.php' + '?' + 'id=' + value,
+            }
+        });
+    }
+
+    //填充cell
+    renderRow(rowData){
+        return(
+            <TouchableOpacity onPress={()=>this.pushToDetail(rowData.id)}>
+                <CommunaHotCell
+                    image={rowData.image}
+                    title={rowData.title}
+                />
+            </TouchableOpacity>
+        );
+    }
+
     onRequestClose(){
         this.setState({
             isModal:false,
