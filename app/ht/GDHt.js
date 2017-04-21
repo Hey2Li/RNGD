@@ -65,9 +65,8 @@ export default class GDHt extends Component {
                 }
 
                 //存储数组的中最后一个元素的ID
-                let lastID = responseData.data[responseData.data.length - 1].id;
-                console.log(responseData.data);
-                AsyncStorage.setItem('lastID',lastID.toString());
+                let uslastID = responseData.data[responseData.data.length - 1].id;
+                AsyncStorage.setItem('uslastID',uslastID.toString());
             }).catch((error)=>{
 
         })
@@ -115,8 +114,11 @@ export default class GDHt extends Component {
                 });
 
                 //存储数组的中最后一个元素的ID
-                let lastID = responseData.data[responseData.data.length - 1].id;
-                AsyncStorage.setItem('lastID',lastID.toString());
+                let uslastID = responseData.data[responseData.data.length - 1].id;
+                AsyncStorage.setItem('uslastID',uslastID.toString());
+                //存储数组中的第一个元素的ID
+                let usfirstID = responseData.data[0].id;
+                AsyncStorage.setItem('usfirstID',usfirstID.toString());
             }).catch((error)=>{
 
         })
@@ -170,7 +172,7 @@ export default class GDHt extends Component {
     //加载更多
     loadMore(){
         //读取存储的id
-        AsyncStorage.getItem('lastID')
+        AsyncStorage.getItem('uslastID')
             .then((value)=>{
                 //数据加载操作
                 this.loadMoreData(value);
