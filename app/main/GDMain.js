@@ -117,7 +117,7 @@ export default class RNGD extends Component {
                         console.log(responseData);
                   })
           }
-      },3000);
+      },30000);
     }
   componentWillUnmount(){
       this.subscription.remove();
