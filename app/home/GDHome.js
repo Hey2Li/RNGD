@@ -17,7 +17,6 @@ import  HalfHourHot from '../hourList/GDHalfHourHot';
 import Search from '../main/GDSearch';
 import NoDataView from '../main/GDNoDataView';
 import CommunaHotCell from '../main/GDCommunaHotCell';
-import HTTPBase from '../http/HTTPBase';
 import CommunaDetail from '../main/GDCommunaDetail';
 //第三方
 import {PullList} from 'react-native-pull';
@@ -69,8 +68,11 @@ export default class GDHome extends Component {
                 //存储数组中的第一个元素的ID
                 let cnfirstID = responseData.data[0].id;
                 AsyncStorage.setItem('cnfirstID',cnfirstID.toString());
-            }).catch((error)=>{
 
+                //存储到本地
+
+            }).catch((error)=>{
+                //拿到本地存储的的数据展示出来，如果没有数据就显示无数据页面
         })
         // let formData = new FormData();
         // formData.append("count","5");
@@ -95,6 +97,7 @@ export default class GDHome extends Component {
         //     .done();
     }
 
+    //加载更多数据
     loadMoreData(value){
 
         //读取id

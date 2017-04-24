@@ -17,7 +17,6 @@ import USHalfHourHot from '../ht/GDUSHalfHourHot';
 import Search from '../main/GDSearch';
 import NoDataView from '../main/GDNoDataView';
 import CommunaHotCell from '../main/GDCommunaHotCell';
-import HTTPBase from '../http/HTTPBase';
 import CommunaDetail from '../main/GDCommunaDetail';
 //第三方
 import {PullList} from 'react-native-pull';

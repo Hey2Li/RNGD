@@ -13,7 +13,6 @@ import {
 import CommunaNavBar from '../main/GDCommunaNavBar';
 import CommunaHotCell from '../main/GDCommunaHotCell';
 import NoDataView from '../main/GDNoDataView';
-import HTTPBase from '../http/HTTPBase';
 import CommunaDetail from '../main/GDCommunaDetail';
 
 import {PullList} from 'react-native-pull';
