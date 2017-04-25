@@ -16,7 +16,7 @@ import  CommunaNavBar from '../main/GDCommunaNavBar';
 import  HalfHourHot from '../hourList/GDHalfHourHot';
 import Search from '../main/GDSearch';
 import NoDataView from '../main/GDNoDataView';
-import CommunaHotCell from '../main/GDCommunaHotCell';
+import CommunaCell from '../main/GDCommunaCell';
 import CommunaDetail from '../main/GDCommunaDetail';
 //第三方
 import {PullList} from 'react-native-pull';
@@ -234,9 +234,12 @@ export default class GDHome extends Component {
     renderRow(rowData){
         return(
             <TouchableOpacity onPress={()=>this.pushToDetail(rowData.id)}>
-                <CommunaHotCell
+                <CommunaCell
                     image={rowData.image}
                     title={rowData.title}
+                    mall={rowData.mall}
+                    pubTime={rowData.pubtime}
+                    fromSite={rowData.fromsite}
                 />
             </TouchableOpacity>
         );

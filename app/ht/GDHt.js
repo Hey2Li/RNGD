@@ -16,7 +16,7 @@ import CommunaNavBar from '../main/GDCommunaNavBar';
 import USHalfHourHot from '../ht/GDUSHalfHourHot';
 import Search from '../main/GDSearch';
 import NoDataView from '../main/GDNoDataView';
-import CommunaHotCell from '../main/GDCommunaHotCell';
+import CommunaCell from '../main/GDCommunaCell';
 import CommunaDetail from '../main/GDCommunaDetail';
 //第三方
 import {PullList} from 'react-native-pull';
@@ -46,6 +46,8 @@ export default class GDHt extends Component {
 
         HTTPBase.get('http://guangdiu.com/api/getlist.php',params)
             .then((responseData)=>{
+                //清空数组
+                this.data = [];
 
                 //拼接数据
                 this.data = this.data.concat(responseData.data);
@@ -66,8 +68,21 @@ export default class GDHt extends Component {
                 //存储数组的中最后一个元素的ID
                 let uslastID = responseData.data[responseData.data.length - 1].id;
                 AsyncStorage.setItem('uslastID',uslastID.toString());
-            }).catch((error)=>{
 
+                //清空本地存储的数据
+                RealmBase.removeAllData('HTData');
+
+                //存储到本地
+                RealmBase.create('HTData', responseData.data);
+            }).catch((error)=>{
+                //拿到本地存储的的数据展示出来，如果没有数据就显示无数据页面
+                this.data = RealmBase.loadAll('HTData');
+
+                //重新渲染
+                this.setState({
+                    dataSource:this.state.dataSource.cloneWithRows(this.data),
+                    loaded:true,
+                })
         })
         // let formData = new FormData();
         // formData.append("count","5");
@@ -221,9 +236,12 @@ export default class GDHt extends Component {
     renderRow(rowData){
         return(
             <TouchableOpacity onPress={()=>this.pushToDetail(rowData.id)}>
-                <CommunaHotCell
+                <CommunaCell
                     image={rowData.image}
                     title={rowData.title}
+                    mall={rowData.mall}
+                    pubTime={rowData.pubtime}
+                    fromSite={rowData.fromsite}
                 />
             </TouchableOpacity>
         );
