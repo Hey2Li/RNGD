@@ -16,7 +16,7 @@ const HomeSchema = {
 }
 
 const HTSchema = {
-    name:'HomeData',
+    name:'HTData',
     properties:{
         id:'int',
         title:'string',
