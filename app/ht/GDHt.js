@@ -84,27 +84,6 @@ export default class GDHt extends Component {
                     loaded:true,
                 })
         })
-        // let formData = new FormData();
-        // formData.append("count","5");
-        // formData.append("mall","京东商城");
-        // fetch('http://guangdiu.com/api/getlist.php',{
-        //     method:'POST',
-        //     headers:{},
-        //     body:formData,
-        // })
-        //     .then((response) => response.json())
-        //     .then((responseData)=>{
-        //         this.setState({
-        //             dataSource:this.state.dataSource.cloneWithRows(responseData.data),
-        //             loaded:true,
-        //         });
-        //         if (resolve !== undefined){
-        //             setTimeout(()=>{
-        //                 resolve();
-        //             },1000);
-        //         }
-        //     })
-        //     .done();
     }
 
     loadMoreData(value){

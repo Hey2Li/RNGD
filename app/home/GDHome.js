@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 // 组件
 import  CommunaNavBar from '../main/GDCommunaNavBar';
-import  HalfHourHot from '../hourList/GDHalfHourHot';
+import  HalfHourHot from './GDHalfHourHot';
 import Search from '../main/GDSearch';
 import NoDataView from '../main/GDNoDataView';
 import CommunaCell from '../main/GDCommunaCell';
