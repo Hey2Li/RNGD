@@ -115,6 +115,9 @@ export default class RNGD extends Component {
                         });
                         console.log(responseData);
                   })
+                  .catch((error)=>{
+
+              })
           }
       },30000);
     }

@@ -69,10 +69,21 @@ export default class GDHome extends Component {
                 let cnfirstID = responseData.data[0].id;
                 AsyncStorage.setItem('cnfirstID',cnfirstID.toString());
 
-                //存储到本地
+                //清空本地存储的数据
+                RealmBase.removeAllData('HomeData');
 
+                //存储到本地
+                RealmBase.create('HomeData', responseData.data);
             }).catch((error)=>{
                 //拿到本地存储的的数据展示出来，如果没有数据就显示无数据页面
+                this.data = RealmBase.loadAll('HomeData');
+
+                //重新渲染
+                this.setState({
+                    dataSource:this.state.dataSource.cloneWithRows(this.data),
+                    loaded:true,
+                })
+
         })
         // let formData = new FormData();
         // formData.append("count","5");
