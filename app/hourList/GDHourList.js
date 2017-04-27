@@ -28,29 +28,38 @@ export default class GDHourList extends Component {
         this.state = {
             dataSource:new ListView.DataSource({rowHasChanged:(r1, r2) => r1!==r2}),
             loaded:false,
-            isModal:false,
+            prompt:'',
         };
+
+        this.nexthourhour = '';     // 下一小时时间
+        this.nexthourdate = '';     // 下一小时日期
+        this.lasthourhour = '';     // 上一小时时间
+        this.lasthourdate = '';     // 上一小时日期
+
         this.data = [];
         this.fetchData = this.fetchData.bind(this);
     }
 
     //网络请求的方法
-    fetchData(resolve){
+    fetchData(resolve, date, hour){
 
         let params = {};
 
+        if (date) {
+            params = {
+                "date":date,
+                "hour":hour,
+            }
+        }
+
         HTTPBase.get('http://guangdiu.com/api/getranklist.php',params)
             .then((responseData)=>{
-                //清空数组
-                this.data = [];
-
-                //拼接数据
-                this.data = this.data.concat(responseData.data);
 
                 //重新渲染
                 this.setState({
-                    dataSource:this.state.dataSource.cloneWithRows(this.data),
+                    dataSource:this.state.dataSource.cloneWithRows(responseData.data),
                     loaded:true,
+                    prompt:responseData.displaydate + responseData.rankhour + '点档' + '（' +  responseData.rankduring + '）'
                 });
 
                 //关闭加载动画
@@ -60,37 +69,24 @@ export default class GDHourList extends Component {
                     },1000);
                 }
 
-                //存储数组的中最后一个元素的ID
-                let cnlastID = responseData.data[responseData.data.length - 1].id;
-                AsyncStorage.setItem('cnlastID',cnlastID.toString());
-                //存储数组中的第一个元素的ID
-                let cnfirstID = responseData.data[0].id;
-                AsyncStorage.setItem('cnfirstID',cnfirstID.toString());
-
-                //清空本地存储的数据
-                RealmBase.removeAllData('HomeData');
-
-                //存储到本地
-                RealmBase.create('HomeData', responseData.data);
+                //保留一些数据
+                this.nexthourhour = responseData.nexthourhour;     // 下一小时时间
+                this.nexthourdate = responseData.nexthourdate;     // 下一小时日期
+                this.lasthourhour = responseData.lasthourhour;     // 上一小时时间
+                this.lasthourdate = responseData.lasthourdate;
             }).catch((error)=>{
-            //拿到本地存储的的数据展示出来，如果没有数据就显示无数据页面
-            this.data = RealmBase.loadAll('HomeData');
-
-            //重新渲染
-            this.setState({
-                dataSource:this.state.dataSource.cloneWithRows(this.data),
-                loaded:true,
-            })
-
         })
     }
 
     //跳转到设置
     pushToSetting() {
-        this.props.navigator.push({
-            component: Search,
-        });
+        // this.props.navigator.push({
+        //     component: Search,
+        // });
+        //获取当前时间
+
     }
+
     //中间标题
     renderTitleItem(){
         return(
@@ -153,7 +149,12 @@ export default class GDHourList extends Component {
             </TouchableOpacity>
         );
     }
-
+    lastHour(){
+        this.fetchData(undefined, this.lasthourdate, this.lasthourhour);
+    }
+    nextHour(){
+        this.fetchData(undefined, this.nexthourdate, this.nexthourhour);
+    }
     render() {
         return (
             <View style={styles.container}>
@@ -164,18 +165,18 @@ export default class GDHourList extends Component {
 
                 {/*提醒栏*/}
                 <View style={styles.promptViewStyle}>
-                    <Text>提示栏</Text>
+                    <Text>{this.state.prompt}</Text>
                 </View>
                 {/*根据网络状态决定是否渲染*/}
                 {this.renderListView()}
 
                 {/*操作栏*/}
                 <View style={styles.operationViewStyle}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => this.lastHour()}>
                         <Text style={{marginRight:10, fontSize:17, color:'green'}}>{"<" + "上一小时"}</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => this.nextHour()}>
                         <Text style={{marginLeft:10, fontSize:17, color:'green'}}>{"下一小时" + ">"}</Text>
                     </TouchableOpacity>
                 </View>
