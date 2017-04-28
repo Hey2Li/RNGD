@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     itemViewStyle:{
         width:width * 0.25,
         height:70,
-        // backgroundColor:'green',
+        backgroundColor:'rgba(249,249,249,1.0)',
         justifyContent:'center',
         alignItems:'center',
     },

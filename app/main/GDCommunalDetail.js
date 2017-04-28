@@ -11,7 +11,7 @@ import {
     DeviceEventEmitter
 } from 'react-native';
 
-import CommunaNvBar from './GDCommunaNavBar';
+import CommunaNvBar from './GDCommunalNavBar';
 
 export default class GDCommunaDetail extends Component{
 

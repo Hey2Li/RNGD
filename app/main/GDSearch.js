@@ -12,10 +12,10 @@ import {
     AsyncStorage,
 } from 'react-native';
 // 组件
-import  CommunaNavBar from '../main/GDCommunaNavBar';
+import  CommunaNavBar from './GDCommunalNavBar';
 import NoDataView from '../main/GDNoDataView';
-import CommunaCell from '../main/GDCommunaCell';
-import CommunaDetail from '../main/GDCommunaDetail';
+import CommunaCell from './GDCommunalCell';
+import CommunaDetail from './GDCommunalDetail';
 //第三方
 import {PullList} from 'react-native-pull';
 

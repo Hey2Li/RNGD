@@ -11,7 +11,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 
-import  CommunaNavBar from '../main/GDCommunaNavBar';
+import  CommunaNavBar from '../main/GDCommunalNavBar';
 import  SettingsCell from  './GDSettingCell';
 
 export default class GDSetting extends Component {

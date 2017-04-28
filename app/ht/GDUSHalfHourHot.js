@@ -13,10 +13,10 @@ import {
     Navigator
 } from 'react-native';
 
-import CommunaNavBar from '../main/GDCommunaNavBar';
-import CommunaHotCell from '../main/GDCommunaHotCell';
+import CommunaNavBar from '../main/GDCommunalNavBar';
+import CommunaHotCell from '../main/GDCommunalHotCell';
 import NoDataView from '../main/GDNoDataView';
-import CommunaDetail from '../main/GDCommunaDetail';
+import CommunaDetail from '../main/GDCommunalDetail';
 
 import {PullList} from 'react-native-pull';
 

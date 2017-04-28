@@ -12,13 +12,13 @@ import {
     Navigator
 } from 'react-native';
 // 组件
-import CommunaNavBar from '../main/GDCommunaNavBar';
+import CommunaNavBar from '../main/GDCommunalNavBar';
 import USHalfHourHot from '../ht/GDUSHalfHourHot';
 import Search from '../main/GDSearch';
 import NoDataView from '../main/GDNoDataView';
-import CommunaCell from '../main/GDCommunaCell';
-import CommunaDetail from '../main/GDCommunaDetail';
-import CommunaSiftMenu from '../main/GDCommunaSiftMenu';
+import CommunaCell from '../main/GDCommunalCell';
+import CommunaDetail from '../main/GDCommunalDetail';
+import CommunaSiftMenu from '../main/GDCommunalSiftMenu';
 //第三方
 import {PullList} from 'react-native-pull';
 
@@ -323,7 +323,7 @@ export default class GDHt extends Component {
                 >
                     <Navigator
                         initialRoute={{
-                            name:'halfHourHot',
+                            name:'usHalfHourHot',
                             component:USHalfHourHot
                         }}
 

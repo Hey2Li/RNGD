@@ -12,10 +12,10 @@ import {
     Navigator
 } from 'react-native';
 // 组件
-import  CommunaNavBar from '../main/GDCommunaNavBar';
+import  CommunaNavBar from '../main/GDCommunalNavBar';
 import NoDataView from '../main/GDNoDataView';
-import CommunaCell from '../main/GDCommunaCell';
-import CommunaDetail from '../main/GDCommunaDetail';
+import CommunaCell from '../main/GDCommunalCell';
+import CommunaDetail from '../main/GDCommunalDetail';
 import Setting from '../hourList/GDSetting';
 
 //第三方
