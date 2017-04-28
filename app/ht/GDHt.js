@@ -18,18 +18,25 @@ import Search from '../main/GDSearch';
 import NoDataView from '../main/GDNoDataView';
 import CommunaCell from '../main/GDCommunaCell';
 import CommunaDetail from '../main/GDCommunaDetail';
+import CommunaSiftMenu from '../main/GDCommunaSiftMenu';
 //第三方
 import {PullList} from 'react-native-pull';
+
+//数据
+import HTSiftData from '../data/HTSiftData.json';
+
 
 const {width, height} = Dimensions.get('window');
 
 export default class GDHt extends Component {
+
     constructor(props){
         super(props);
         this.state = {
             dataSource:new ListView.DataSource({rowHasChanged:(r1, r2) => r1!==r2}),
             loaded:false,
-            isModal:false,
+            isUSHalfHourHotModal:false,     // 半小时热门状态
+            isSiftModal:false,
         };
         this.data = [];
         this.fetchData = this.fetchData.bind(this);
@@ -116,19 +123,88 @@ export default class GDHt extends Component {
 
         })
     }
+    // 筛选数据网络请求
+    loadSiftData(mall, cate) {
+
+        let params = {};
+
+        if (mall === "" && cate === "") {   // 全部
+            this.loadData(undefined);
+            return;
+        }
+
+        if (mall === "") {  // cate 有值
+            params = {
+                "cate" : cate,
+                "country" : "us"
+            };
+        }else {
+            params = {
+                "mall" : mall,
+                "country" : "us"
+            };
+        }
+
+
+        HTTPBase.get('https://guangdiu.com/api/getlist.php', params)
+            .then((responseData) => {
+
+                // 清空数组
+                this.data = [];
+
+                // 拼接数据
+                this.data = this.data.concat(responseData.data);
+
+                // 重新渲染
+                this.setState({
+                    dataSource: this.state.dataSource.cloneWithRows(this.data),
+                    loaded:true,
+                });
+
+                // 存储数组中最后一个元素的id
+                let cnlastID = responseData.data[responseData.data.length - 1].id;
+                AsyncStorage.setItem('cnlastID', cnlastID.toString());
+
+            })
+            .catch((error) => {
+
+            })
+    }
+
     //跳转到半小时热门
     pushToHalfHourHot(){
         this.setState({
-            isModal:true,
+            isUSHalfHourHotModal:true,
         })
-        // this.props.navigator.push({
-        //     component:HalfHourHot,
-        //     animationType:Navigator.SceneConfigs.FloatFromBottom,
-        // });
     }
+
+    // 显示筛选菜单
+    showSiftMenu() {
+        this.setState({
+            isSiftModal:true,
+        });
+    }
+
+    // 跳转到搜索
     pushToSearch() {
         this.props.navigator.push({
             component: Search,
+        });
+    }
+
+    // 安卓模态销毁处理
+    onRequestClose() {
+        this.setState({
+            isUSHalfHourHotModal:false,
+            isSiftModal:false,
+        });
+    }
+
+    // 关闭模态
+    closeModal(data) {
+        this.setState({
+            isUSHalfHourHotModal:data,
+            isSiftModal:data
         });
     }
 
@@ -144,7 +220,9 @@ export default class GDHt extends Component {
 
     renderTitleItem(){
         return(
-            <TouchableOpacity>
+            <TouchableOpacity
+                onPress={() => this.showSiftMenu()}
+            >
                 <Image source={{uri:'navtitle_home_down_66x20'}} style={styles.navbarTitleItemStyle} />
             </TouchableOpacity>
         );
@@ -226,24 +304,21 @@ export default class GDHt extends Component {
         );
     }
 
-    onRequestClose(){
-        this.setState({
-            isModal:false,
-        })
-    }
-    closeModal(data){
-        this.setState({
-            isModal:data,
-        })
-    }
     render() {
         return (
             <View style={styles.container}>
+                {/* 导航栏样式 */}
+                <CommunaNavBar
+                    leftItem = {() => this.renderLeftItem()}
+                    titleItem = {() => this.renderTitleItem()}
+                    rightItem = {() => this.renderRightItem()}
+                />
+
                 {/*初始化模态*/}
                 <Modal
                     animationType='slide'
                     translucent={false}
-                    visible={this.state.isModal}
+                    visible={this.state.isUSHalfHourHotModal}
                     onRequestClose={() => this.onRequestClose()}
                 >
                     <Navigator
@@ -261,11 +336,18 @@ export default class GDHt extends Component {
                         }}
                     />
                 </Modal>
-                <CommunaNavBar
-                    leftItem={()=>this.renderLeftItem()}
-                    titleItem={()=>this.renderTitleItem()}
-                    rightItem={()=>this.renderRightItem()}
-                />
+                {/*初始化筛选菜单*/}
+                <Modal
+                    animationType='none'
+                    translucent={true}
+                    visible={this.state.isSiftModal}
+                    onRequestClose={() => this.onRequestClose()}
+                >
+                    <CommunaSiftMenu
+                        removeModal={(data)=>this.closeModal(data)}
+                        data={HTSiftData}
+                        loadSiftData = {(mall, cate) => this.loadSiftData(mall, cate)}/>
+                </Modal>
                 {/*根据网络状态决定是否渲染*/}
                 {this.renderListView()}
             </View>

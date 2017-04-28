@@ -13,10 +13,11 @@ import {
 } from 'react-native';
 // 组件
 import  CommunaNavBar from '../main/GDCommunaNavBar';
-import Search from '../main/GDSearch';
 import NoDataView from '../main/GDNoDataView';
 import CommunaCell from '../main/GDCommunaCell';
 import CommunaDetail from '../main/GDCommunaDetail';
+import Setting from '../hourList/GDSetting';
+
 //第三方
 import {PullList} from 'react-native-pull';
 
@@ -80,11 +81,9 @@ export default class GDHourList extends Component {
 
     //跳转到设置
     pushToSetting() {
-        // this.props.navigator.push({
-        //     component: Search,
-        // });
-        //获取当前时间
-
+        this.props.navigator.push({
+            component: Setting,
+        });
     }
 
     //中间标题

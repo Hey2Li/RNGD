@@ -18,8 +18,12 @@ import Search from '../main/GDSearch';
 import NoDataView from '../main/GDNoDataView';
 import CommunaCell from '../main/GDCommunaCell';
 import CommunaDetail from '../main/GDCommunaDetail';
+import CommunaSiftMenu from '../main/GDCommunaSiftMenu';
 //第三方
 import {PullList} from 'react-native-pull';
+
+//数据
+import HomeSiftData from '../data/HomeSiftData.json';
 
 const {width, height} = Dimensions.get('window');
 
@@ -29,12 +33,14 @@ export default class GDHome extends Component {
         this.state = {
             dataSource:new ListView.DataSource({rowHasChanged:(r1, r2) => r1!==r2}),
             loaded:false,
-            isModal:false,
+            isHalfHourHotModal:false,
+            isSiftModal:false,
         };
         this.data = [];
         this.fetchData = this.fetchData.bind(this);
         this.loadMore = this.loadMore.bind(this);
     }
+
 
     //网络请求的方法
     fetchData(resolve){
@@ -135,7 +141,58 @@ export default class GDHome extends Component {
 
         })
     }
-  //跳转到半小时热门
+
+    //网络请求的方法
+    loadSiftData(mall, cate){
+
+        let params = {};
+
+        if (mall === "" && cate === ""){
+            this.fetchData(undefined);
+            return;
+        }
+
+        if (mall === ""){ //cate有值
+            params = {
+                "cate":cate,
+            };
+        }else {
+            params = {
+                "mall":mall
+            };
+        }
+
+        HTTPBase.get('http://guangdiu.com/api/getlist.php',params)
+            .then((responseData)=>{
+                //清空数组
+                this.data = [];
+
+                //拼接数据
+                this.data = this.data.concat(responseData.data);
+
+                //重新渲染
+                this.setState({
+                    dataSource:this.state.dataSource.cloneWithRows(this.data),
+                    loaded:true,
+                });
+
+                //关闭加载动画
+                if (resolve !== undefined){
+                    setTimeout(()=>{
+                        resolve();
+                    },1000);
+                }
+
+                //存储数组的中最后一个元素的ID
+                let cnlastID = responseData.data[responseData.data.length - 1].id;
+                AsyncStorage.setItem('cnlastID',cnlastID.toString());
+
+            }).catch((error)=>{
+
+        })
+    }
+
+    //跳转到半小时热门
     pushToHalfHourHot(){
         this.setState({
             isModal:true,
@@ -161,9 +218,19 @@ export default class GDHome extends Component {
          );
     }
 
+    //显示筛选菜单
+    showSiftMenu() {
+        this.setState({
+            isSiftModal:true,
+        });
+    }
+
+
     renderTitleItem(){
         return(
-            <TouchableOpacity>
+            <TouchableOpacity
+                onPress={() => {this.showSiftMenu()}}
+            >
               <Image source={{uri:'navtitle_home_down_66x20'}} style={styles.navbarTitleItemStyle} />
             </TouchableOpacity>
         );
@@ -247,22 +314,24 @@ export default class GDHome extends Component {
 
     onRequestClose(){
         this.setState({
-            isModal:false,
+            isHalfHourHotModal:false,
+            isSiftModal:false,
         })
     }
     closeModal(data){
         this.setState({
-            isModal:data,
+            isHalfHourHotModal:data,
+            isSiftModal:false,
         })
     }
     render() {
         return (
             <View style={styles.container}>
-                {/*初始化模态*/}
+                {/*初始化近半小时热门*/}
                 <Modal
                     animationType='slide'
                     translucent={false}
-                    visible={this.state.isModal}
+                    visible={this.state.isHalfHourHotModal}
                     onRequestClose={() => this.onRequestClose()}
                 >
                     <Navigator
@@ -280,6 +349,20 @@ export default class GDHome extends Component {
                         }}
                     />
                 </Modal>
+
+                {/*初始化筛选菜单*/}
+                <Modal
+                    animationType='none'
+                    translucent={true}
+                    visible={this.state.isSiftModal}
+                    onRequestClose={() => this.onRequestClose()}
+                >
+                    <CommunaSiftMenu
+                        removeModal={(data)=>this.closeModal(data)}
+                        data={HomeSiftData}
+                        loadSiftData = {(mall, cate) => this.loadSiftData(mall, cate)}/>
+                </Modal>
+
                 <CommunaNavBar
                   leftItem={()=>this.renderLeftItem()}
                   titleItem={()=>this.renderTitleItem()}

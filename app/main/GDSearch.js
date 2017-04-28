@@ -122,7 +122,7 @@ export default class GDSearch extends Component {
 
     renderTitleItem(){
         return(
-            <Text>搜索全网折扣</Text>
+            <Text style={styles.navbarTitleItemStyle}>搜索全网折扣</Text>
         );
     }
 
@@ -215,7 +215,7 @@ export default class GDSearch extends Component {
                     </View>
                     {/*右边*/}
                     <View style={{marginRight:8}}>
-                       <TouchableOpacity onPress={() => dismissKeyboard()}>
+                       <TouchableOpacity onPress={() => this.pop()}>
                            <Text style={{color:'green'}}>取消</Text>
                        </TouchableOpacity>
                     </View>
@@ -249,8 +249,9 @@ const styles = StyleSheet.create({
         marginLeft:15,
     },
     navbarTitleItemStyle:{
-        width:66,
-        height:20,
+        fontSize:17,
+        color:'black',
+        marginRight:50
     },
     navbarRightItemStyle:{
         width:20,
