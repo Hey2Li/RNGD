@@ -327,6 +327,14 @@ export default class GDHome extends Component {
     render() {
         return (
             <View style={styles.container}>
+                <CommunaNavBar
+                    leftItem={()=>this.renderLeftItem()}
+                    titleItem={()=>this.renderTitleItem()}
+                    rightItem={()=>this.renderRightItem()}
+                />
+                {/*根据网络状态决定是否渲染*/}
+                {this.renderListView()}
+
                 {/*初始化近半小时热门*/}
                 <Modal
                     animationType='slide'
@@ -352,6 +360,7 @@ export default class GDHome extends Component {
 
                 {/*初始化筛选菜单*/}
                 <Modal
+                    pointerEvents={'box-none'}
                     animationType='none'
                     translucent={true}
                     visible={this.state.isSiftModal}
@@ -362,14 +371,6 @@ export default class GDHome extends Component {
                         data={HomeSiftData}
                         loadSiftData = {(mall, cate) => this.loadSiftData(mall, cate)}/>
                 </Modal>
-
-                <CommunaNavBar
-                  leftItem={()=>this.renderLeftItem()}
-                  titleItem={()=>this.renderTitleItem()}
-                  rightItem={()=>this.renderRightItem()}
-                />
-                {/*根据网络状态决定是否渲染*/}
-                {this.renderListView()}
             </View>
         );
   }
